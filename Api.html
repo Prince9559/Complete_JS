@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Api Call</title>
+    <style>
+      .in {
+        border: 5px solid gray;
+        padding: 5px;
+        outline: none;
+      }
+      .error {
+        background-color: red;
+      }
+      .correct {
+        background-color: green;
+      }
+    </style>
+  </head>
+  <body class="col">
+    <input
+      class="in"
+      type="number"
+      id="t"
+      onkeyup="f(event)"
+      onchange="f(event)"
+      placeholder="Enter the Age.."
+    />
+    
+    <input
+      class="in"
+      type="number"
+      id="t"
+      onkeyup="f(event)"
+      onchange="f(event)"
+      placeholder="Enter the Age.."
+    />
+    
+    
+    <br /><br />
+    <button onclick="test()">Click</button>
+
+    <script>
+      function f(evt) {
+        console.log(evt);
+        console.log(evt.target);
+        console.log(evt.target.value);
+        let n = Number(evt.target.value);
+         evt.target.classList.remove("correct")
+          evt.target.classList.remove("error");
+        if (n < 18 || n > 60) {
+          evt.target.classList.add("error");
+        } else {
+          evt.target.classList.add("correct");
+        }
+      }
+      function test() {
+        let input = document.getElementById("t");
+        let age = Number(input.value);
+
+        if (age >= 18 && age <= 60) {
+          input.style.borderColor = "green";
+          input.title = "Correct";
+        } else {
+          input.style.borderColor = "red";
+          input.title = "Wrong";
+        }
+      }
+    </script>
+  </body>
+</html>

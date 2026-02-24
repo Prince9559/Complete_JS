@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation</title>
+</head>
+<body>
+
+    <input type="text" id="t" placeholder="Enter the name..">
+    <br><br>
+    <button onclick="f()">Click</button>
+
+    <script>
+        function f() 
+        {
+            let name = document.getElementById("t").value;
+
+            let pattern = /^[A-Za-z ]+$/;
+
+            if (name=="") 
+            {
+                alert("Name is required");
+            } 
+            else if (!pattern.test(name)) 
+            {
+                alert("Only letters and space are allowed");
+            } 
+            else {
+                alert("Valid Name");
+            }
+        }
+    </script>
+
+</body>
+</html>

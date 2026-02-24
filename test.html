@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script> 
+
+console.log("A: Start");
+function solve(x)
+{
+
+}
+ function delay(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function asynccountdown(){
+  console.log("1");
+  await delay(1000);
+  console.log("2");
+  await delay(1000);
+  console.log("3");
+  await delay(1000);
+  console.log("Async Done!");
+}
+
+
+ function simplecountdown(){
+  console.log("1");
+     delay(1000);
+  console.log("2");
+    delay(1000);
+  console.log("3");
+    delay(1000);
+  console.log("Simple Done!");
+}
+
+
+simplecountdown();
+console.log("Done");
+
+
+
+  </script>
+</body>
+</html>

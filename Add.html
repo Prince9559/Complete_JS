@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add and Sub</title>
+</head>
+<body>
+    
+    <input type="number" id="t" placeholder="Enter the value.."></input><br>
+    <input type="number" id="t1" placeholder="Enter the value.."></input><br>
+    <input type="text" id="result" placeholder="Result"></input><br>
+    <button onclick="Add()" >Add</button>
+    <button onclick="Sub()" >Sub</button>
+
+    <script>
+
+        function Add()
+        {
+
+        let a=Number(document.getElementById("t").value);
+        let b=Number(document.getElementById("t1").value);
+        document.getElementById("result").value=a+b;
+
+        }
+
+          function Sub()
+        {
+
+        let a=Number(document.getElementById("t").value);
+        let b=Number(document.getElementById("t1").value);
+        document.getElementById("result").value=a-b;
+
+        }
+
+    </script>
+
+</body>
+</html>

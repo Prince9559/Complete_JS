@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data List</title>
+</head>
+<body>
+
+<input list="stateList" id="state" placeholder="Select State" oninput="loadCity()">
+
+<datalist id="stateList">
+<option value="Uttar Pradesh">
+<option value="Uttarakhand">
+</datalist>
+
+<br><br>
+
+<input list="cityList" placeholder="Select City">
+<datalist id="cityList"></datalist>
+
+<script>
+
+function loadCity() 
+{
+    const state=document.getElementById("state").value;
+    const cityList=document.getElementById("cityList");
+
+    let cities=[];
+
+    if (state=="Uttar Pradesh") 
+    {
+        cities=["Varanasi","Bhadohi","Mirzapur"];
+    } 
+    else if (state=="Uttarakhand") 
+    {
+        cities=["Dehradun","Haridwar","Nainital"];
+    }
+
+    cityList.innerHTML = "";
+
+    cities.forEach(city => {
+        const option = document.createElement("option");
+        option.value = city;
+        cityList.appendChild(option);
+    });
+
+}
+</script>
+
+</body>
+</html>

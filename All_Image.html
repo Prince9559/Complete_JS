@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Image</title>
+</head>
+<body>
+    <label>Value I : <input type="number" id="num1"></input></label><br>
+    <label>Value II : <input type="number" id="num2"></input></label><br>
+    <label>Result : <input type="number" id="result"></input></label><br>
+
+
+    <input type="radio" name="option">Add</input>
+    <input type="radio" name="option">Sub</input><br>
+
+    <button>Submit</button>
+
+    <script>
+      
+  
+      function calculate()
+      {
+        
+        let a=Number(document.getElementById("num1").value);
+        let b=Number(document.getElementById("num2").value);
+
+        let operation = document.querySelector('input[name="op"]:checked');
+
+        if(operation.value==add)
+      {
+        result=a+b;
+      }
+      if (operation.value==sub) 
+      {
+      result=a-b;  
+      } 
+      
+
+
+      }
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Calculator</title>
+</head>
+<body>
+
+  <h2>Simple Calculator</h2>
+
+  <label>
+    Value I :
+    <input type="number" id="num1">
+  </label>
+  <br><br>
+
+  <label>
+    Value II :
+    <input type="number" id="num2">
+  </label>
+  <br><br>
+
+  <label>
+    Result :
+    <input type="number" id="result" readonly>
+  </label>
+  <br><br>
+
+  <!-- Radio buttons -->
+  <input type="radio" name="op" value="add"> Add
+  <input type="radio" name="op" value="sub"> Sub
+  <br><br>
+
+  <button onclick="calculate()">Submit</button>
+
+  <script>
+    function calculate() {
+      let a = Number(document.getElementById("num1").value);
+      let b = Number(document.getElementById("num2").value);
+
+      let operation = document.querySelector('input[name="op"]:checked');
+
+      if (!operation) {
+        alert("Please select Add or Sub");
+        return;
+      }
+
+      let result;
+
+      if (operation.value === "add") {
+        result = a + b;
+      } else if (operation.value === "sub") {
+        result = a - b;
+      }
+
+      document.getElementById("result").value = result;
+    }
+  </script>
+
+</body>
+</html>

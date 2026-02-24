@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+</head>
+<body>
+
+    <input type="number" id="t" oninput="data()">
+
+    <br><br>
+
+    <input type="radio" name="num" id="r1">Zero</input> 
+    <input type="radio" name="num" id="r2">Negative</input>  
+    <input type="radio" name="num" id="r3">Positive</input>
+
+    <script>
+        function data() 
+        {
+
+            let a = Number(document.getElementById("t").value);
+
+            document.getElementById("r1").checked = false;
+            document.getElementById("r2").checked = false;
+            document.getElementById("r3").checked = false;
+
+            if (a==0) 
+            {
+                document.getElementById("r1").checked = true;
+            } 
+            else if(a<0) 
+            {
+                document.getElementById("r2").checked = true;
+            } 
+            else if (a>0) 
+            {
+                document.getElementById("r3").checked = true;
+            }
+
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Page</title>
+  <style>
+    body{font-family:system-ui;margin:0;padding:24px;background:#fff}
+    .card{border:1px solid #e5e7eb;border-radius:14px;padding:16px;max-width:900px}
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <input  list="t1" type="text"/>
+    <datalist id="t1">
+       
+    </datalist>
+    <input type="button" value="Add" onclick="f()">
+    </div>
+
+  <script>
+
+  const dl=document.querySelector("#t1");
+
+  function f()
+    {
+      
+      const a=["One","Two","Three"];
+       
+      for(i in a)
+      {
+
+        let newelement=document.createElement("option");
+        item=a[i];
+       
+        newelement.value=item;
+        dl.appendChild(newelement);
+        
+      }
+      
+    }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Table</title>
+</head>
+<body>
+
+    <input type="number" id="t" placeholder="Enter the hour.." /><br><br>
+    <button onclick="Time()">Click</button>
+
+    <script>
+        function Time() 
+        {
+            let hour = Number(document.getElementById("t").value);
+
+            if (hour<0 || hour>23) 
+            {
+                document.write("Wrong Input");
+            }
+            else if (hour>=6 && hour<=10) 
+            {
+                document.write("Breakfast!");
+            }
+            else if (hour>=12 && hour<=15) 
+            {
+                document.write("Lunch!");
+            }
+            else if (hour>=19 && hour<=22) 
+            {
+                document.write("Dinner!");
+            }
+            else 
+            {
+                document.write("No Meal!");
+            }
+        }
+    </script>
+
+</body>
+</html>

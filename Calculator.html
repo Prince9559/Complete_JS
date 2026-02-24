@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+</head>
+<body>
+
+    <input type="number" id="x" placeholder="Enter the number.."></input><br>
+    <input type="number" id="y" placeholder="Enter the number.."></input><br>
+     
+    <textarea id="result"></textarea>
+
+    <button onclick="add()">Click</button>
+    
+    <script>
+
+        function add()
+        {
+
+            let a=Number(document.getElementById("x").value);
+            let b=Number(document.getElementById("y").value);
+            document.getElementById("result").value=a+b;
+
+        }
+
+    </script>
+    
+</body>
+</html>
+

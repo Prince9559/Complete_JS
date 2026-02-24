@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+
+    <img src="pic/1.jpg" alt="" id="pic" />
+    <button onclick="changepic()">change pic</button>
+
+    <input type="text" onchange="loadImage(event)" onkeyup="loadImage(event)" />
+
+    <script>
+
+      let fileno = 0;
+      const total = 3;
+      const pic = document.getElementById("pic");
+
+      function changepic() 
+      {
+        pic.src = `pic/${fileno}.jpg`;
+        fileno = (fileno + 1) % total;
+      }
+
+      function loadImage(evt) 
+      {
+        console.log(evt);
+        console.log(evt.target);
+        console.log(evt.target.value);
+        pic.src = evt.target.value;
+      }
+
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Old Title</title>
+</head>
+<body>
+
+    <h1>Hello World</h1>
+
+    <a href="#">Link 1</a>
+    <a href="#">Link 2</a>
+    <a href="#">Link 3</a>
+
+    <script>
+         
+        document.title = "Hi";
+
+        let headingText = document.querySelector("h1").textContent;
+        console.log("H1 Text:", headingText);
+
+        let totalLinks = document.querySelectorAll("a").length;
+        console.log("Total Links:", totalLinks);
+
+    </script>
+
+</body>
+</html>

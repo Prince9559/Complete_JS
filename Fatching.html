@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fetch Data</title>
+  </head>
+  <body>
+    <script>
+
+      const url = "https://api.example.com/endpoint";
+      const data = {
+        name: "John Doe",
+        email: "john.doe@example.com",
+      }; 
+
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      };
+
+      fetch(url, options)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Response:", data);
+          
+        })
+        
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Switch Statement</title>
+</head>
+<body>
+
+    <input type="number" id="r1" placeholder="Enter first number"><br><br>
+    <input type="number" id="r2" placeholder="Enter second number"><br><br>
+    <input type="number" id="r3" placeholder="Enter third number"><br><br>
+    <input type="text" id="result" placeholder="Result"><br><br>
+
+    <button onclick="find()">Find Max</button>
+
+    <script>
+        function find()
+        {
+            let a = Number(document.getElementById("r1").value);
+            let b = Number(document.getElementById("r2").value);
+            let c = Number(document.getElementById("r3").value);
+            let max;
+
+            switch (a>b) 
+            {
+                case true:
+                max = a;
+                break;
+
+                case false:
+                max = b;
+                break;
+            
+            switch (a>c)
+            {
+                case true:
+                max=a;
+                break;
+
+                case false:
+                max = c;
+                break;
+            }
+        }
+
+            document.getElementById("result").value=max;
+
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice1</title>
+</head>
+<body>
+
+    <input type="text" id="name" placeholder="Enter The Name" oninput="validateName()"/>
+    <p id="er" style="color:red;"></p>
+
+    <script>
+        let input = document.getElementById("name");
+        let error = document.getElementById("er");
+
+        function validateName() {
+            let value = input.value;
+
+            value = value.replace(/[^a-zA-Z ]/g, "");
+
+            let words = value.split(" ");
+            for (let i = 0; i < words.length; i++) {
+                if (words[i] !== "") {
+                    words[i] =
+                        words[i].charAt(0).toUpperCase() +
+                        words[i].slice(1).toLowerCase();
+                }
+            }
+            input.value = words.join(" ");
+            error.innerText = "";
+        }
+    </script>
+
+</body>
+</html>
