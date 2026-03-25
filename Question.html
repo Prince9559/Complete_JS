@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question</title>
+</head>
+<body>
+
+    <script>
+        let questions = [
+    {
+        question: "What is the Capital of India?",
+        options: ["Punjab", "Varanasi", "New Delhi", "Mumbai"],
+        answer: 3
+    },
+    {
+        question: "Who created C++?",
+        options: ["Punit", "Rohit", "Dennis Ritchie", "Bjarne Stroustrup"],
+        answer: 4
+    },
+    {
+        question: "Who Created C?",
+        options: ["Azad", "Dennis Ritchie", "Bjarne Stroustrup", "Prince"],
+        answer: 2
+    },
+    {
+        question: "What is National Bird India?",
+        options: ["Peacock", "Hen", "Duck", "Pegon"],
+        answer: 1
+    },
+    {
+        question: "What is National Animal India?",
+        options: ["Lion", "Tiger", "Elephant", "Cow"],
+        answer: 2
+    },
+    {
+        question: "What is National Flower India?",
+        options: ["Lotus", "Sunflower", "Rose", "Lily"],
+        answer: 1
+    },
+    {
+        question: "Who Created Java?",
+        options: ["James Gosling", "Dennis Ritchie", "Bjarne Stroustrup", "MS Dhoni"],
+        answer: 1
+    },
+    {
+        question: "Who Created Java?",
+        options: ["James Gosling", "Dennis Ritchie", "Bjarne Stroustrup", "Error"],
+        answer: 4
+    },
+    {
+        question: "What is the capital of Canada?",
+        options: ["Mumbai", "Delhi", "Ottawa", "Error"],
+        answer: 3
+    }
+];
+
+let current = 0;
+let correctCount = 0;
+
+function askQuestion() {
+    if (current >= questions.length) {
+        clearInterval(timer);
+        if (correctCount === questions.length) {
+            alert("Congratulations! You are the WINNER!");
+        } else {
+            alert("Better luck next time!");
+        }
+        return;
+    }
+
+    let q = questions[current];
+    let text = q.question + "\n";
+    q.options.forEach((opt, i) => {
+        text += (i + 1) + ". " + opt + "\n";
+    });
+    text += "You have 20 seconds to answer (1-4)";
+
+    let answer = parseInt(prompt(text));
+    if (answer >= 1 && answer <= 4) {
+        if (answer === q.answer) {
+            alert("Correct Answer!");
+            correctCount++;
+        } else {
+            alert("Incorrect Answer!");
+        }
+    } else {
+        alert("Invalid input! Moving to next question.");
+    }
+
+    current++;
+}
+
+
+let timer = setInterval(askQuestion, 20000);
+askQuestion(); 
+    </script>
+    
+</body>
+</html>

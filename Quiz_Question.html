@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quiz</title>
+</head>
+
+<body>
+
+<h3 id="timer">Time: 10</h3>
+<div id="quiz"></div>
+<button id="nextBtn" onclick="nextQuestion()">Next</button>
+
+<script>
+
+let questions = [
+  {
+    ques_no: 1,
+    question: "What is HTML?",
+    a: "Programming Language",
+    b: "Markup Language",
+    c: "Database",
+    d: "Operating System"
+  },
+  {
+    ques_no: 2,
+    question: "Which is used for styling?",
+    a: "HTML",
+    b: "Python",
+    c: "CSS",
+    d: "C++"
+  },
+  {
+    ques_no: 3,
+    question: "Which language is used for logic?",
+    a: "CSS",
+    b: "JavaScript",
+    c: "HTML",
+    d: "SQL"
+  },
+  {
+    ques_no: 4,
+    question: "What is c++?",
+    a: "CSS",
+    b: "Programming Language",
+    c: "HTML",
+    d: "SQL"
+  },
+  {
+    ques_no: 5,
+    question: "What is Js",
+    a: "CSS",
+    b: "Programming Language?",
+    c: "HTML",
+    d: "SQL"
+  }
+];
+
+let i = localStorage.getItem("currentQuestion") ? parseInt(localStorage.getItem("currentQuestion")) : 0;
+
+let answers = JSON.parse(localStorage.getItem("answers")) || [];
+
+let time = 10;
+let interval;
+
+showQuestion();
+startTimer();
+
+function startTimer() 
+{
+  clearInterval(interval);
+  time = 10;
+
+  interval = setInterval(function() 
+  {
+    document.getElementById("timer").innerText = "Time: " + time;
+
+    if (time === 0) {
+      clearInterval(interval);
+      nextQuestion();
+    }
+
+    time--;
+  }, 1000);
+}
+
+function showQuestion() 
+{
+  let q = questions[i];
+
+  document.getElementById("quiz").innerHTML = `
+    <h3>Q${q.ques_no}. ${q.question}</h3>
+
+    <label>
+      <input type="radio" name="answer" value="a" ${answers[i] === 'a' ? 'checked' : ''}>
+      ${q.a}
+    </label><br>
+
+    <label>
+      <input type="radio" name="answer" value="b" ${answers[i] === 'b' ? 'checked' : ''}>
+      ${q.b}
+    </label><br>
+
+    <label>
+      <input type="radio" name="answer" value="c" ${answers[i] === 'c' ? 'checked' : ''}>
+      ${q.c}
+    </label><br>
+
+    <label>
+      <input type="radio" name="answer" value="d" ${answers[i] === 'd' ? 'checked' : ''}>
+      ${q.d}
+    </label><br><br>
+  `;
+}
+
+function nextQuestion() 
+{
+  let selected = document.querySelector('input[name="answer"]:checked');
+
+  if (!selected && time >= 0) 
+  {
+    alert("Please select an answer!");
+    return; 
+  }
+
+  if (selected) 
+  {
+    answers[i] = selected.value;
+    localStorage.setItem("answers", JSON.stringify(answers));
+  }
+
+  i++;
+  localStorage.setItem("currentQuestion", i);
+
+  if (i < questions.length) 
+  {
+    showQuestion();
+    startTimer();
+  } 
+  else 
+  {
+    clearInterval(interval);
+
+    document.getElementById("quiz").innerHTML = "Quiz Finished 🎉";
+    document.getElementById("timer").innerHTML = "";
+
+    localStorage.removeItem("currentQuestion");
+    localStorage.removeItem("answers");
+
+    let btn = document.getElementById("nextBtn");
+    btn.innerText = "Restart";
+    btn.onclick = restartQuiz;
+  }
+}
+
+function restartQuiz()
+{
+  i = 0;
+  answers = [];
+
+  localStorage.removeItem("currentQuestion");
+  localStorage.removeItem("answers");
+
+  document.getElementById("nextBtn").innerText = "Next";
+  document.getElementById("nextBtn").onclick = nextQuestion;
+
+  showQuestion();
+  startTimer();
+}
+
+</script>
+
+</body>
+</html>

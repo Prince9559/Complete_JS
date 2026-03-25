@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image</title>
+</head>
+<body>
+
+  <input type="button" value="Show Image" id="d" />
+  <div id="box"></div>
+
+  <script>
+
+    const dd = document.querySelector("#d");
+    const box = document.querySelector("#box");
+
+    dd.addEventListener("click", function () {
+      box.innerHTML = '<img src="pic/1.jpg">';
+    });
+
+
+  </script>
+
+</body>
+</html>

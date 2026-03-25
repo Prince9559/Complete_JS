@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Question Display</title>
+    <style>
+      .question{
+        font-size: 24px;
+        font-weight: bold;
+        margin: 50px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="question" id="question">Loading question...</div>
+
+    <script>
+      let questions = [
+        {
+          question: "1. What is the Capital of India?",
+          options: ["Punjab","Varanasi","New Delhi","Mumbai"]
+        },
+        {
+          question: "2. Who created C++?",
+          options: ["Punit","Rohit","Dennis Ritchie","Bjarne Stroustrup"]
+        },
+        {
+          question: "3. Who Created C?",
+          options: ["Azad","Dennis Ritchie","Bjarne Stroustrup","Prince"]
+        },
+        {
+          question: "4. What is National Bird India?",
+          options: ["Peacock","Hen","Duck","Pegon"]
+        },
+        {
+          question: "5. What is National Animal India?",
+          options: ["Lion","Tiger","Elephant","Cow"]
+        },
+        {
+          question: "6. What is National Flower India?",
+          options: ["Lotus", "Sunflower", "Rose","Lily"]
+        },
+        {
+          question: "7. Who Created Java?",
+          options: ["James Gosling","Dennis Ritchie","Bjarne Stroustrup","MS Dhoni",]
+        },
+        {
+          question: "8. Who Created Java?",
+          options: ["James Gosling","Dennis Ritchie","Bjarne Stroustrup","Error"]
+        },
+        {
+          question: "9. What is the capital of Canada?",
+          options: ["Mumbai","Delhi","Ottawa","Error"]
+        },
+      ];
+
+      let index = 0;
+
+      function Data() 
+      {
+        document.getElementById("question").innerText =
+        questions[index].question;
+
+        index++;
+        if (index == questions.length) 
+        {
+          index = 0;
+        }
+      }
+
+      Data();
+      setInterval(Data, 1000);
+
+    </script>
+  </body>
+</html>

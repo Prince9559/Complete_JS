@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Time</title>
+</head>
+
+<body>
+    <h1 id="time"></h1>
+
+    <script>
+
+        let number = 0;
+
+        let timer = setInterval(() => 
+        {
+            number++;
+            document.getElementById("time").innerText = number;
+
+            if(number==10)
+            {
+                clearInterval(timer);
+                document.getElementById("time").innerText = "Time Over";
+            }
+        }, 1000)
+        
+    </script>
+</body>
+
+</html>

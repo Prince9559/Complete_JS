@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Selector</title>
+
+    <style>
+        .imgs{
+            width: 200px;
+            height: 150px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+
+
+    <div id="d">
+    <img class="imgs" src="pic/1.jpg" alt="Image 1">
+    <img class="imgs" src="pic/2.jpg" alt="Image 2">
+    <img class="imgs" src="pic/3.jpg" alt="Image 3">
+    <img class="imgs" src="pic/4.jpg" alt="Image 4">
+    </div>
+
+    <script>
+         
+        const images = document.querySelectorAll("#d");
+        console.log("Total Images:", images.length);
+
+        images.forEach(img);
+
+        function img(){
+            img.style.border = "3px solid blue";
+        }
+        
+    </script>
+    
+</body>
+</html>

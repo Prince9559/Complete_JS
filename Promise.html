@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise</title>
+  </head>
+  <body>
+    
+    <script>
+
+      const promise1 = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve("foo");
+        }, 300);
+      });
+
+      promise1.then((value) => {
+        console.log(value);
+      });
+
+      console.log(promise1);
+
+    </script>
+  </body>
+</html>

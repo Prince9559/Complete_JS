@@ -1,38 +1,259 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fetch Data</title>
-  </head>
-  <body>
-    <script>
+<head>
+<meta charset="UTF-8">
+<title>Computer Quiz</title>
 
-      const url = "https://api.example.com/endpoint";
-      const data = {
-        name: "John Doe",
-        email: "john.doe@example.com",
-      }; 
+<style>
 
-      const options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      };
+body{
+font-family: Arial;
+background: linear-gradient(135deg,#4facfe,#00f2fe);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
 
-      fetch(url, options)
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Response:", data);
-          
-        })
-        
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+.container{
+background:white;
+padding:30px;
+width:500px;
+border-radius:10px;
+box-shadow:0 10px 20px rgba(0,0,0,0.2);
+}
 
-    </script>
-  </body>
+h2{
+text-align:center;
+margin-bottom:10px;
+}
+
+.timer{
+text-align:center;
+font-size:18px;
+font-weight:bold;
+color:red;
+margin-bottom:20px;
+}
+
+#quiz{
+margin-bottom:20px;
+}
+
+label{
+display:block;
+background:#f4f4f4;
+padding:10px;
+margin:8px 0;
+border-radius:5px;
+cursor:pointer;
+transition:0.3s;
+}
+
+label:hover{
+background:#dfe9ff;
+}
+
+input[type="radio"]{
+margin-right:10px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#4facfe;
+border:none;
+color:white;
+font-size:16px;
+border-radius:5px;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+background:#007bff;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th{
+background:#4facfe;
+color:white;
+}
+
+td,th{
+padding:10px;
+text-align:center;
+border:1px solid #ddd;
+}
+
+tr:nth-child(even){
+background:#f2f2f2;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Computer Quiz</h2>
+<div class="timer">Time : <span id="timer">20</span> sec</div>
+
+<div id="quiz"></div>
+
+<button id="nextBtn">Next</button>
+
+</div>
+
+<script>
+
+const url = "https://prince9559.github.io/jsonproject/computer.json";
+
+fetch(url)
+.then((response)=>response.json())
+.then((data)=>{
+
+let index = 0;
+let timeLeft = 20;
+let timer;
+let score = 0;
+let results = [];
+
+function showQuestion(){
+
+if(index >= data.length){
+
+let table = `
+<h2>Quiz Finished</h2>
+<h3>Your Score : ${score} / ${data.length}</h3>
+
+<table>
+<tr>
+<th>Question</th>
+<th>Your Answer</th>
+<th>Correct Answer</th>
+</tr>
+`;
+
+results.forEach(r=>{
+table += `
+<tr>
+<td>${r.question}</td>
+<td>${r.user}</td>
+<td>${r.correct}</td>
+</tr>
+`;
+});
+
+table += "</table>";
+
+document.getElementById("quiz").innerHTML = table;
+document.getElementById("nextBtn").style.display = "none";
+return;
+}
+
+let q = data[index];
+
+let output = `
+<div>
+<h3>Q${q.ques_no}. ${q.question}</h3>
+
+<label>
+<input type="radio" name="answer" value="a">
+a) ${q.a}
+</label>
+
+<label>
+<input type="radio" name="answer" value="b">
+b) ${q.b}
+</label>
+
+<label>
+<input type="radio" name="answer" value="c">
+c) ${q.c}
+</label>
+
+<label>
+<input type="radio" name="answer" value="d">
+d) ${q.d}
+</label>
+
+</div>
+`;
+
+document.getElementById("quiz").innerHTML = output;
+
+timeLeft = 20;
+document.getElementById("timer").innerText = timeLeft;
+
+clearInterval(timer);
+
+timer = setInterval(()=>{
+
+timeLeft--;
+document.getElementById("timer").innerText = timeLeft;
+
+if(timeLeft == 0){
+clearInterval(timer);
+saveAnswer();
+index++;
+showQuestion();
+}
+
+},1000);
+
+}
+
+function saveAnswer(){
+
+let q = data[index];
+let selected = document.querySelector('input[name="answer"]:checked');
+
+let userAnswer = selected ? selected.value : "No Answer";
+
+if(userAnswer == q.correct){
+score++;
+}
+
+results.push({
+question: q.question,
+user: userAnswer,
+correct: q.correct
+});
+
+}
+
+document.getElementById("nextBtn").addEventListener("click", ()=>{
+
+let selected = document.querySelector('input[name="answer"]:checked');
+
+if(!selected){
+alert("Please select an option");
+return;
+}
+
+clearInterval(timer);
+
+saveAnswer();
+
+index++;
+showQuestion();
+
+});
+
+showQuestion();
+
+});
+
+</script>
+
+</body>
 </html>
