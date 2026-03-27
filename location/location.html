@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Route to Bhadohi</title>
+    <title>Live Tracking with Path</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -34,6 +34,9 @@ var arrowIcon = L.icon({
 let userMarker;
 let routeLine;
 
+let path = [];
+let pathLine = L.polyline([], { color: 'red', weight: 4 }).addTo(map);
+
 navigator.geolocation.watchPosition(async function(position) {
 
     let lat = position.coords.latitude;
@@ -41,6 +44,7 @@ navigator.geolocation.watchPosition(async function(position) {
 
     let userLatLng = [lat, lon];
 
+     
     if (!userMarker) {
         userMarker = L.marker(userLatLng, { icon: arrowIcon }).addTo(map);
     } else {
@@ -49,6 +53,11 @@ navigator.geolocation.watchPosition(async function(position) {
 
     map.setView(userLatLng, 14);
 
+     
+    path.push(userLatLng);
+    pathLine.setLatLngs(path);
+
+     
     let url = `https://router.project-osrm.org/route/v1/driving/${lon},${lat};${destination[1]},${destination[0]}?overview=full&geometries=geojson`;
 
     let res = await fetch(url);
@@ -73,23 +82,6 @@ navigator.geolocation.watchPosition(async function(position) {
 }, {
     enableHighAccuracy: true
 });
-
-
-function success(position) {
-  doSomething(position.coords.latitude, position.coords.longitude);
-}
-
-function error() {
-  alert("Sorry, no position available.");
-}
-
-const options = {
-  enableHighAccuracy: true,
-  maximumAge: 30000,
-  timeout: 27000,
-};
-
-const watchID = navigator.geolocation.watchPosition(success, error, options);
 
 </script>
 
