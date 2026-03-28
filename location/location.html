@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Live Tracking with Path</title>
+    <title>Route to Bhadohi</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -12,6 +12,12 @@
     </style>
 </head>
 <body>
+
+
+<button id="find-me">Show my location</button><br />
+<p id="status"></p>
+<a id="map-link" href="" target="_blank">Location unknown</a>
+ 
 
 <div id="map"></div>
 
@@ -34,9 +40,6 @@ var arrowIcon = L.icon({
 let userMarker;
 let routeLine;
 
-let path = [];
-let pathLine = L.polyline([], { color: 'red', weight: 4 }).addTo(map);
-
 navigator.geolocation.watchPosition(async function(position) {
 
     let lat = position.coords.latitude;
@@ -44,7 +47,6 @@ navigator.geolocation.watchPosition(async function(position) {
 
     let userLatLng = [lat, lon];
 
-     
     if (!userMarker) {
         userMarker = L.marker(userLatLng, { icon: arrowIcon }).addTo(map);
     } else {
@@ -53,11 +55,6 @@ navigator.geolocation.watchPosition(async function(position) {
 
     map.setView(userLatLng, 14);
 
-     
-    path.push(userLatLng);
-    pathLine.setLatLngs(path);
-
-     
     let url = `https://router.project-osrm.org/route/v1/driving/${lon},${lat};${destination[1]},${destination[0]}?overview=full&geometries=geojson`;
 
     let res = await fetch(url);
@@ -82,6 +79,54 @@ navigator.geolocation.watchPosition(async function(position) {
 }, {
     enableHighAccuracy: true
 });
+
+
+function success(position) {
+  doSomething(position.coords.latitude, position.coords.longitude);
+}
+
+function error() {
+  alert("Sorry, no position available.");
+}
+
+const options = {
+  enableHighAccuracy: true,
+  maximumAge: 30000,
+  timeout: 27000,
+};
+
+const watchID = navigator.geolocation.watchPosition(success, error, options);
+
+
+function geoFindMe() {
+  const status = document.querySelector("#status");
+  const mapLink = document.querySelector("#map-link");
+
+  mapLink.href = "";
+  mapLink.textContent = "";
+
+  function success(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+
+    status.textContent = "";
+    mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+    mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+  }
+
+  function error() {
+    status.textContent = "Unable to retrieve your location";
+  }
+
+  if (!navigator.geolocation) {
+    status.textContent = "Geolocation is not supported by your browser";
+  } else {
+    status.textContent = "Locating…";
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+}
+
+document.querySelector("#find-me").addEventListener("click", geoFindMe);
 
 </script>
 
