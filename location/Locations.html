@@ -1,31 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Location</title>
-</head>
-<body>
-
+  </head>
+  <body>
     <button onclick="Location()">Show Location</button>
     <div id="output"></div>
 
     <script>
-    function Location() 
-    {
-        navigator.geolocation.getCurrentPosition(
-            function(position) 
-            {
-                document.getElementById("output").innerHTML ="Latitude: "+position.coords.latitude+"<br>" +"Longitude: " + position.coords.longitude;
-            },
-            function(error) 
-            {
-                document.getElementById("output").innerHTML ="Error: " +error.message;
-            }
+      
+      function Location() 
+      {
+        const watchId = navigator.geolocation.watchPosition(
+          function (position) 
+          {
+            document.getElementById("output").innerHTML = "Updated Latitude: " + position.coords.latitude + "<br>" +"Updated Longitude: " + position.coords.longitude;
+          },
+          function (error) 
+          {
+            console.log("Watch error:", error.message);
+          }
         );
-    }
-    
+      }
+      
     </script>
-    
-</body>
+  </body>
 </html>
