@@ -12,22 +12,23 @@
 
 <script>
   function Location() {
-    navigator.geolocation.watchPosition(
-      function (position) {
+
+    navigator.geolocation.watchPosition(  
+    function (position) 
+    {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
 
-         
-        const p = document.createElement("p");
-        p.innerHTML = "Latitude: " + lat + " | Longitude: " + lon;
-
-         
+        const p = document.createElement("p");p.innerHTML = "Latitude: " + lat + " | Longitude: " + lon;
         document.getElementById("output").appendChild(p);
+
       },
-      function (error) {
+      function (error) 
+      {
         console.log("Watch error:", error.message);
       }
     );
+
   }
 </script>
 
