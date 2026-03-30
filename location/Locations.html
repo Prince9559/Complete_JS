@@ -2,17 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Distance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Location</title>
 </head>
 <body>
 
-<button onclick="Location()">Show Distance</button>
+<button onclick="Location()">Show Location</button>
 <div id="output"></div>
 
 <script>
-  function getDistance(lat1, lon1, lat2, lon2) 
-  {
-    const R = 6371; 
+
+  const targetLat = 25.3176;
+  const targetLon = 82.9739;
+
+  function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
 
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -25,15 +29,12 @@
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c; 
+    return R * c;
   }
 
   function Location() {
 
-    const targetLat = 25.2830;
-    const targetLon = 82.8880;
-
-    navigator.geolocation.getCurrentPosition(
+    navigator.geolocation.watchPosition(
       function (position) {
 
         const lat = position.coords.latitude;
@@ -41,13 +42,22 @@
 
         const distance = getDistance(lat, lon, targetLat, targetLon);
 
-        document.getElementById("output").innerHTML = "Your Location: " + lat + ", " + lon + "<br>" +  "Distance: " + distance.toFixed(2) + " KM";
+        const p = document.createElement("p");
+
+        p.innerHTML =
+          "Latitude: " + lat +
+          " | Longitude: " + lon +
+          " | Distance: " + distance.toFixed(2) + " KM";
+
+        document.getElementById("output").appendChild(p);
+
       },
       function (error) {
-        console.log(error.message);
+        console.log("Watch error:", error.message);
       }
     );
   }
+
 </script>
 
 </body>
