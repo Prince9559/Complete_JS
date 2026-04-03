@@ -1,29 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Live Tracking Map</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <style>
+    body { margin: 0; font-family: Arial; }
+    #map { height: 100vh; }
+  </style>
 </head>
+
 <body>
-<button type="button" onclick="f()">Click Me</button>
-    
-    <script>
 
-        function makeObject(latitude,longitude)
-        {
-           var obj=`{"lat":${latitude},"long":${longitude}}`;
-           return JSON.parse( obj);
-        }
+<div id="map"></div>
 
-        function f()
-        {
-          let obj=makeObject(10,100);
-          console.table(obj);
-        }
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-        
-    </script>
-    
+<script>
+
+const defaultLat = 25.3176;
+const defaultLng = 82.9739;
+
+const map = L.map('map').setView([defaultLat, defaultLng], 15);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+}).addTo(map);
+
+let marker = L.marker([defaultLat, defaultLng]).addTo(map);
+let latlngs = JSON.parse(localStorage.getItem("path")) || [];
+
+let polyline = L.polyline(latlngs, { color: 'blue', weight: 5 }).addTo(map);
+
+async function getLocationName(lat, lng) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+    const data = await res.json();
+
+    return `
+      ${data.address.road || ""},
+      ${data.address.suburb || data.address.neighbourhood || ""},
+      ${data.address.city || data.address.town || data.address.village || ""}
+    `;
+  } catch {
+    return "Location not found";
+  }
+}
+
+navigator.geolocation.watchPosition(async function(position) {
+
+    let lat = position.coords.latitude;
+    let lng = position.coords.longitude;
+
+    if (latlngs.length > 0) {
+      let last = latlngs[latlngs.length - 1];
+      let distance = map.distance(last, [lat, lng]);
+
+      if (distance < 5) return; 
+    }
+    marker.setLatLng([lat, lng]);
+
+    map.panTo([lat, lng], {
+      animate: true,
+      duration: 1
+    });
+
+    latlngs.push([lat, lng]);
+    localStorage.setItem("path", JSON.stringify(latlngs));
+
+    polyline.setLatLngs(latlngs);
+    L.circleMarker([lat, lng], {
+      radius: 4,
+      color: "red"
+    }).addTo(map);
+
+    const locationName = await getLocationName(lat, lng);
+    marker.bindPopup(locationName).openPopup();
+
+}, 
+function(error) {
+    console.log("Error:", error.message);
+}, 
+{
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 5000
+});
+
+function clearPath() {
+  localStorage.removeItem("path");
+  location.reload();
+}
+
+</script>
+
 </body>
 </html>

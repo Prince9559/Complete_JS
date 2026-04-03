@@ -47,7 +47,6 @@ navigator.geolocation.watchPosition(async function(position) {
     let lat = position.coords.latitude;
     let lng = position.coords.longitude;
 
-     
     marker.setLatLng([lat, lng]);
     map.setView([lat, lng]);
 
@@ -57,9 +56,12 @@ navigator.geolocation.watchPosition(async function(position) {
     const locationName = await getLocationName(lat, lng);
     marker.bindPopup(locationName).openPopup();
 
-}, function(error) {
+}, 
+function(error) 
+{
     console.log("Error:", error.message);
-}, {
+}, 
+{
     enableHighAccuracy: true,
     maximumAge: 0,
     timeout: 5000
