@@ -10,11 +10,26 @@
   <style>
     body { margin: 0; font-family: Arial; }
     #map { height: 100vh; }
+
+    /* Clear Button */
+    #clearBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      padding: 10px 15px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 
 <body>
 
+<button id="clearBtn">Clear Path</button>
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -24,17 +39,23 @@
 const defaultLat = 25.3176;
 const defaultLng = 82.9739;
 
+// 🌍 Map Init
 const map = L.map('map').setView([defaultLat, defaultLng], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
 }).addTo(map);
 
+// 📍 Marker
 let marker = L.marker([defaultLat, defaultLng]).addTo(map);
+
+// 📌 Load saved path
 let latlngs = JSON.parse(localStorage.getItem("path")) || [];
 
+// 🔵 Polyline
 let polyline = L.polyline(latlngs, { color: 'blue', weight: 5 }).addTo(map);
 
+// 🔁 Reverse geocoding (gali + area + city)
 async function getLocationName(lat, lng) {
   try {
     const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
@@ -50,6 +71,7 @@ async function getLocationName(lat, lng) {
   }
 }
 
+// 📡 Live Tracking
 navigator.geolocation.watchPosition(async function(position) {
 
     let lat = position.coords.latitude;
@@ -59,24 +81,39 @@ navigator.geolocation.watchPosition(async function(position) {
       let last = latlngs[latlngs.length - 1];
       let distance = map.distance(last, [lat, lng]);
 
-      if (distance < 5) return; 
+      // 🚨 Fix: Agar bahut door (50km+) → reset
+      if (distance > 50000) {
+        latlngs = [];
+        localStorage.removeItem("path");
+        polyline.setLatLngs([]);
+      }
+
+      // 🧹 Ignore small movement
+      if (distance < 5) return;
     }
+
+    // 📍 Update marker
     marker.setLatLng([lat, lng]);
 
+    // 🎯 Smooth movement
     map.panTo([lat, lng], {
       animate: true,
       duration: 1
     });
 
+    // ➕ Add new point
     latlngs.push([lat, lng]);
     localStorage.setItem("path", JSON.stringify(latlngs));
 
     polyline.setLatLngs(latlngs);
+
+    // 🔴 Dot for each point
     L.circleMarker([lat, lng], {
       radius: 4,
       color: "red"
     }).addTo(map);
 
+    // 📍 Location name
     const locationName = await getLocationName(lat, lng);
     marker.bindPopup(locationName).openPopup();
 
@@ -90,10 +127,11 @@ function(error) {
     timeout: 5000
 });
 
-function clearPath() {
+// 🧹 Clear Button Click
+document.getElementById("clearBtn").onclick = function() {
   localStorage.removeItem("path");
   location.reload();
-}
+};
 
 </script>
 
