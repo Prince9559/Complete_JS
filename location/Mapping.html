@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Tracking Map</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <style>
+    body {margin: 0; font-family: Arial;}
+    #map {height: 100vh;}
+  </style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+const map = L.map('map').setView([25.3176, 82.9739], 15);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+}).addTo(map);
+
+let marker = L.marker([25.3176, 82.9739]).addTo(map);
+
+let latlngs = [];
+let polyline = L.polyline(latlngs, { color: 'blue', weight: 5 }).addTo(map);
+
+async function getLocationName(lat, lng) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+    const data = await res.json();
+    return data.address.city || data.address.town || data.address.village || "Unknown";
+  } catch {
+    return "Location not found";
+  }
+}
+
+navigator.geolocation.watchPosition(async function(position) {
+
+    let lat = position.coords.latitude;
+    let lng = position.coords.longitude;
+
+     
+    marker.setLatLng([lat, lng]);
+    map.setView([lat, lng]);
+
+    latlngs.push([lat, lng]);
+    polyline.setLatLngs(latlngs);
+
+    const locationName = await getLocationName(lat, lng);
+    marker.bindPopup(locationName).openPopup();
+
+}, function(error) {
+    console.log("Error:", error.message);
+}, {
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 5000
+});
+
+</script>
+
+</body>
+</html>

@@ -8,55 +8,76 @@
 <body>
 
 <button onclick="Location()">Show Location</button>
+<button onclick="showData()">Show</button>
 <div id="output"></div>
+
 
 <script>
 
-  const targetLat = 25.3176;
-  const targetLon = 82.9739;
+let locationArray = JSON.parse(localStorage.getItem("locations"))||[];
 
-  function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * Math.PI / 180) *
-      Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c;
+class LocationData 
+{
+  constructor(lat, lon, distance) 
+  {
+    this.latitude = lat;
+    this.longitude = lon;
+    this.distance = distance;
   }
+}
 
-  function Location() {
+function saveToLocalStorage() 
+{
+  localStorage.setItem("locations", JSON.stringify(locationArray));
+}
 
-    navigator.geolocation.watchPosition(
-      function (position) {
+function showData() 
+{
 
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+  let output = document.getElementById("output");
+  output.innerHTML = ""; 
 
-        const distance = getDistance(lat, lon, targetLat, targetLon);
+  locationArray.forEach((item, index) => 
+  {
+    let div = document.createElement("div");
 
-        const p = document.createElement("p");
+    div.innerHTML = `
+      <b>Record ${index + 1}</b><br>
+      Latitude: ${item.latitude} <br>
+      Longitude: ${item.longitude} <br>
+      Distance: ${item.distance} <br><br>
+    `;
 
-        p.innerHTML =
-          "Latitude: " + lat +
-          " | Longitude: " + lon +
-          " | Distance: " + distance.toFixed(2) + " KM";
+    output.appendChild(div);
+  });
+}
 
-        document.getElementById("output").appendChild(p);
+function Location() 
+{
+  navigator.geolocation.getCurrentPosition(
+    function(position) 
+    {
+      let x1 = position.coords.latitude;
+      let y1 = position.coords.longitude;
 
-      },
-      function (error) {
-        console.log("Watch error:", error.message);
-      }
-    );
-  }
+      let x2 = 25.3176;
+      let y2 = 82.9739;
+
+      let d = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+
+      let loc = new LocationData(x1, y1, d);
+      locationArray.push(loc);
+
+      saveToLocalStorage();
+
+      document.getElementById("output").innerHTML = "Latitude: " + x1 + "<br>" +  "Longitude: " + y1 + "<br>" +  "Distance: " + d;
+
+    },
+    function(error) {
+      console.log("Error:", error.message);
+    }
+  );
+}
 
 </script>
 

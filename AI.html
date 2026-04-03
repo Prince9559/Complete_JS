@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Map Update</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <style>
+    body {margin: 0; font-family: Arial;}
+    #map {height: 80vh;}
+    .controls{padding: 10px;background: #f4f4f4;}
+    input {margin: 5px; padding: 5px;}
+  </style>
+</head>
+
+<body>
+
+<div class="controls">
+  Latitude: <input type="text" id="lat1" placeholder="Enter Latitude">
+  Longitude: <input type="text" id="lng1" placeholder="Enter Longitude">
+  Zoom: <input type="text" id="zoom1" value="13">
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+const map = L.map('map').setView([25.3176, 82.9739], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+}).addTo(map);
+
+let marker = L.marker([25.3176, 82.9739]).addTo(map).bindPopup('Varanasi').openPopup();
+ 
+async function getLocationName(lat, lng) 
+{
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+    const data = await res.json();
+    return data.address.city || data.address.town || data.address.village || data.address.state || "Unknown Location";
+
+  } catch (err) 
+  {
+    return "Location not found";
+  }
+}
+
+async function updateMap() 
+{
+
+  const lat = parseFloat(document.getElementById('lat1').value);
+  const lng = parseFloat(document.getElementById('lng1').value);
+  const zoom = parseInt(document.getElementById('zoom1').value);
+
+  if (isNaN(lat)||isNaN(lng)) 
+  return;
+
+  map.setView([lat, lng], zoom || 13);
+  const locationName = await getLocationName(lat, lng);
+
+  marker.setLatLng([lat, lng]).bindPopup(locationName).openPopup();
+}
+
+document.getElementById('lat1').addEventListener('input', updateMap);
+document.getElementById('lng1').addEventListener('input', updateMap);
+document.getElementById('zoom1').addEventListener('input', updateMap);
+
+</script>
+
+</body>
+</html>
