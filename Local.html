@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Advanced Live Tracking Map</title>
+  <title>Smart Live Tracking Map</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
@@ -11,7 +11,6 @@
     body { margin: 0; font-family: Arial; }
     #map { height: 100vh; }
 
-    /* Clear Button */
     #clearBtn {
       position: absolute;
       top: 10px;
@@ -39,7 +38,7 @@
 const defaultLat = 25.3176;
 const defaultLng = 82.9739;
 
-// 🌍 Map Init
+// 🌍 Map init
 const map = L.map('map').setView([defaultLat, defaultLng], 15);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -55,7 +54,7 @@ let latlngs = JSON.parse(localStorage.getItem("path")) || [];
 // 🔵 Polyline
 let polyline = L.polyline(latlngs, { color: 'blue', weight: 5 }).addTo(map);
 
-// 🔁 Reverse geocoding (gali + area + city)
+// 🔁 Get location name (gali + area + city)
 async function getLocationName(lat, lng) {
   try {
     const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
@@ -71,7 +70,7 @@ async function getLocationName(lat, lng) {
   }
 }
 
-// 📡 Live Tracking
+// 📡 Live tracking
 navigator.geolocation.watchPosition(async function(position) {
 
     let lat = position.coords.latitude;
@@ -81,14 +80,22 @@ navigator.geolocation.watchPosition(async function(position) {
       let last = latlngs[latlngs.length - 1];
       let distance = map.distance(last, [lat, lng]);
 
-      // 🚨 Fix: Agar bahut door (50km+) → reset
+      // 🚨 Very large jump → RESET (50km+)
       if (distance > 50000) {
+        console.log("New city detected → resetting path");
         latlngs = [];
         localStorage.removeItem("path");
         polyline.setLatLngs([]);
+        return;
       }
 
-      // 🧹 Ignore small movement
+      // ❌ Large jump → IGNORE (10km+)
+      if (distance > 10000) {
+        console.log("GPS jump ignored");
+        return;
+      }
+
+      // 🧹 Small movement ignore
       if (distance < 5) return;
     }
 
@@ -101,13 +108,13 @@ navigator.geolocation.watchPosition(async function(position) {
       duration: 1
     });
 
-    // ➕ Add new point
+    // ➕ Add point
     latlngs.push([lat, lng]);
     localStorage.setItem("path", JSON.stringify(latlngs));
 
     polyline.setLatLngs(latlngs);
 
-    // 🔴 Dot for each point
+    // 🔴 Dot marker
     L.circleMarker([lat, lng], {
       radius: 4,
       color: "red"
@@ -127,7 +134,7 @@ function(error) {
     timeout: 5000
 });
 
-// 🧹 Clear Button Click
+// 🧹 Clear path button
 document.getElementById("clearBtn").onclick = function() {
   localStorage.removeItem("path");
   location.reload();
