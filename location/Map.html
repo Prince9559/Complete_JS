@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Mapping</title>
+    <title>Smart Live Map</title>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
@@ -35,12 +35,12 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    
-    var map = L.map('map').setView([26.8467, 80.9462], 13);
 
+    var map = L.map('map').setView([0, 0], 2);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
     }).addTo(map);
+
     let userMarker, secondMarker, line;
 
     navigator.geolocation.watchPosition((position) => {
@@ -51,19 +51,21 @@
         if (userMarker) map.removeLayer(userMarker);
 
         userMarker = L.marker([lat, lng]).addTo(map).bindPopup("Your Live Location 📍").openPopup();
+        connectLocations(); 
 
-    }, (err) => {
-        alert("Location access denied!");
+    }, () => {
+        alert("Location allow karo!");
     });
 
-
-    map.on('click', function(e) {
+    map.on('click', function(e) 
+    {
         let lat2 = e.latlng.lat;
         let lng2 = e.latlng.lng;
 
         if (secondMarker) map.removeLayer(secondMarker);
 
         secondMarker = L.marker([lat2, lng2]).addTo(map).bindPopup("Second Location 📍").openPopup();
+
         connectLocations();
     });
 
@@ -71,16 +73,18 @@
     {
         if (!userMarker || !secondMarker) return;
 
-        let latlng1 = userMarker.getLatLng();
-        let latlng2 = secondMarker.getLatLng();
-        if (line) map.removeLayer(line);
+        let p1 = userMarker.getLatLng();
+        let p2 = secondMarker.getLatLng();
 
-        line = L.polyline([latlng1, latlng2], {color: 'blue'}).addTo(map);
-        calculateDistance(latlng1, latlng2);
+        if (line) map.removeLayer(line);
+        line = L.polyline([p1, p2], {color: 'blue'}).addTo(map);
+
+        calculateDistance(p1, p2);
     }
 
-    function calculateDistance(p1, p2) {
-        let distance = map.distance(p1, p2) / 1000; 
+    function calculateDistance(p1, p2) 
+    {
+        let distance = map.distance(p1, p2) / 1000;
         distance = distance.toFixed(2);
 
         document.getElementById("distance").innerText = distance;
@@ -89,10 +93,7 @@
 
     function speakDistance(distance) 
     {
-        let msg = new SpeechSynthesisUtterance(
-            "Distance is " + distance + " kilometers"
-        );
-
+        let msg = new SpeechSynthesisUtterance("Distance is " + distance + " kilometers");
         speechSynthesis.speak(msg);
     }
 
