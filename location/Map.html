@@ -1,159 +1,244 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smart Live Map</title>
 
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Live Map</title>
 
-    <style>
-      #map {
-        height: 100vh;
-        width: 100%;
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+
+    .info {
+      position: absolute;
+      top: 10px;
+      left: 50px;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 1000;
+      font-family: Arial;
+    }
+
+    .searchBox {
+      position: absolute;
+      top: 60px;
+      left: 50px;
+      z-index: 1000;
+      display: flex;
+      gap: 10px;
+      background: white;
+      padding: 8px 10px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .searchBox input {
+      border: none;
+      outline: none;
+      padding: 8px 12px;
+      border-radius: 20px;
+      width: 200px;
+    }
+
+    .searchBox button {
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="info">
+  <b>Distance:</b> <span id="distance">0</span> KM
+</div>
+
+<div class="searchBox">
+  <input type="text" id="locationInput" placeholder="🔍 Search location..." />
+  <button onclick="searchLocation()">Go</button>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+var greenIcon = L.icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconSize: [25,41],
+  iconAnchor: [12,41]
+});
+
+var redIcon = L.icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconSize: [25,41],
+  iconAnchor: [12,41]
+});
+
+var map = L.map("map").setView([0,0], 2);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap"
+}).addTo(map);
+
+let userMarker, secondMarker, line;
+let historyMarkers = [];
+let nearbyMarkers = [];
+
+function saveLocation(lat, lng, name) 
+{
+  let locations = JSON.parse(localStorage.getItem("locations")) || [];
+  let newLocation = {
+    name: name,
+    latitude: lat,
+    longitude: lng,
+    time: new Date().toLocaleString()
+  };
+
+  locations.push(newLocation);
+  localStorage.setItem("locations", JSON.stringify(locations));
+}
+
+function loadSavedLocations() {
+  let locations = JSON.parse(localStorage.getItem("locations")) || [];
+
+  locations.forEach(loc => {
+    let marker = L.marker([loc.latitude, loc.longitude])
+      .addTo(map)
+      .bindPopup(`${loc.name} <br> ${loc.time}`);
+
+    historyMarkers.push(marker);
+  });
+}
+
+navigator.geolocation.watchPosition(
+  (position) => {
+    let lat = position.coords.latitude;
+    let lng = position.coords.longitude;
+
+    map.setView([lat, lng], 15);
+
+    if (userMarker) map.removeLayer(userMarker);
+
+    userMarker = L.marker([lat, lng], {icon: greenIcon})
+      .addTo(map)
+      .bindPopup("Your Live Location 📍")
+      .openPopup();
+
+    connectLocations();
+  },
+  () => {
+    alert("Allow location access!");
+  }
+);
+
+function getNearbyPlaces(lat, lng) {
+  nearbyMarkers.forEach(m => map.removeLayer(m));
+  nearbyMarkers = [];
+
+  let query = `
+    [out:json];
+    (
+      node["tourism"](around:3000, ${lat}, ${lng});
+      node["amenity"="place_of_worship"](around:3000, ${lat}, ${lng});
+      node["leisure"="park"](around:3000, ${lat}, ${lng});
+    );
+    out;
+  `;
+
+  fetch("https://overpass-api.de/api/interpreter", {
+    method: "POST",
+    body: query
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    let places = data.elements.slice(0, 6);
+
+    places.forEach(place => {
+      if (!place.tags || !place.tags.name) return;
+
+      let marker = L.marker([place.lat, place.lon])
+        .addTo(map)
+        .bindPopup("📍 " + place.tags.name);
+
+      nearbyMarkers.push(marker);
+    });
+
+  })
+  .catch(() => {
+    console.log("Nearby places not found");
+  });
+}
+
+function searchLocation() {
+  let location = document.getElementById("locationInput").value;
+  if (!location) return;
+
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
+    .then(res => res.json())
+    .then(data => {
+
+      if (data.length === 0) {
+        alert("Location not found!");
+        return;
       }
-      .info {
-        position: absolute;
-        top: 10px;
-        left: 50px;
-        background: white;
-        padding: 10px;
-        border-radius: 8px;
-        z-index: 1000;
-        font-family: Arial;
-      }
 
-      .searchBox {
-        position: absolute;
-        top: 60px;
-        left: 50px;
-        z-index: 1000;
-        display: flex;
-        gap: 10px;
-        background: white;
-        padding: 8px 10px;
-        border-radius: 30px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
+      let lat2 = parseFloat(data[0].lat);
+      let lng2 = parseFloat(data[0].lon);
 
-      .searchBox input {
-        border: none;
-        outline: none;
-        padding: 8px 12px;
-        border-radius: 20px;
-        font-size: 14px;
-        width: 200px;
-      }
+      saveLocation(lat2, lng2, location);
 
-      .searchBox button {
-        border: none;
-        padding: 8px 15px;
-        border-radius: 20px;
-        background: #007bff;
-        color: white;
-        cursor: pointer;
-        font-weight: bold;
-        transition: 0.3s;
-      }
+      if (secondMarker) map.removeLayer(secondMarker);
 
-      .searchBox button:hover {
-        background: #0056b3;
-      }
-      
-    </style>
-  </head>
-  <body>
-    <div class="info"><b>Distance:</b> <span id="distance">0</span> KM</div>
+      secondMarker = L.marker([lat2, lng2], {icon: redIcon}).addTo(map).bindPopup(location).openPopup();
+      map.setView([lat2, lng2], 13);
 
-    <div class="searchBox">
-      <input type="text" id="locationInput"placeholder="🔍 Search location..."/>
-      <button onclick="searchLocation()">Go</button>
-    </div>
+      getNearbyPlaces(lat2, lng2);
+      connectLocations();
+    });
+}
 
-    <div id="map"></div>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+function connectLocations() {
+  if (!userMarker || !secondMarker) return;
 
-    <script>
-      var map = L.map("map").setView([0, 0], 2);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap",
-      }).addTo(map);
+  let p1 = userMarker.getLatLng();
+  let p2 = secondMarker.getLatLng();
 
-      let userMarker, secondMarker, line;
+  if (line) map.removeLayer(line);
+  line = L.polyline([p1, p2], {color: "blue"}).addTo(map);
+  calculateDistance(p1, p2);
+}
 
-      navigator.geolocation.watchPosition(
-        (position) => {
-          let lat = position.coords.latitude;
-          let lng = position.coords.longitude;
+function calculateDistance(p1, p2) {
+  let distance = map.distance(p1, p2) / 1000;
+  distance = distance.toFixed(2);
 
-          map.setView([lat, lng], 15);
-          if (userMarker) map.removeLayer(userMarker);
+  document.getElementById("distance").innerText = distance;
 
-          userMarker = L.marker([lat, lng]).addTo(map).bindPopup("Your Live Location 📍").openPopup();
-          connectLocations();
+  speakDistance(distance);
+}
 
-        },
-        () => {
-          alert("Please allow location access!");
-        },
-      );
+function speakDistance(distance) {
+  let msg = new SpeechSynthesisUtterance("Distance is " + distance + " kilometers");
+  speechSynthesis.speak(msg);
+}
 
-      function searchLocation() 
-      {
-        let location = document.getElementById("locationInput").value;
-        if (!location) return;
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`,)
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.length === 0) 
-            {
-              alert("Location not found!");
-              return;
-            }
+loadSavedLocations();
 
-            let lat2 = data[0].lat;
-            let lng2 = data[0].lon;
-            if (secondMarker) map.removeLayer(secondMarker);
+</script>
 
-            secondMarker = L.marker([lat2, lng2]).addTo(map).bindPopup(location).openPopup();
-            map.setView([lat2, lng2], 13);
-            connectLocations();
-
-          });
-      }
-
-      function connectLocations() 
-      {
-        if (!userMarker || !secondMarker) return;
-
-        let p1 = userMarker.getLatLng();
-        let p2 = secondMarker.getLatLng();
-
-        if (line) map.removeLayer(line);
-        line = L.polyline([p1, p2], { color: "blue" }).addTo(map);
-        calculateDistance(p1, p2);
-
-      }
-
-      function calculateDistance(p1, p2) 
-      {
-        let distance = map.distance(p1, p2)/1000;
-        distance = distance.toFixed(2);
-
-        document.getElementById("distance").innerText = distance;
-        speakDistance(distance);
-      }
-
-      function speakDistance(distance) 
-      {
-        let msg = new SpeechSynthesisUtterance("Distance is " + distance + " kilometers",);
-        speechSynthesis.speak(msg);
-      }
-
-
-    </script>
-  </body>
+</body>
 </html>
