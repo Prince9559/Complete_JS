@@ -100,6 +100,7 @@ let nearbyMarkers = [];
 function saveLocation(lat, lng, name) 
 {
   let locations = JSON.parse(localStorage.getItem("locations")) || [];
+
   let newLocation = {
     name: name,
     latitude: lat,
@@ -203,14 +204,19 @@ function searchLocation() {
 
       if (secondMarker) map.removeLayer(secondMarker);
 
-      secondMarker = L.marker([lat2, lng2], {icon: redIcon}).addTo(map).bindPopup(location).openPopup();
-      map.setView([lat2, lng2], 13);
+      secondMarker = L.marker([lat2, lng2], {icon: redIcon})
+        .addTo(map)
+        .bindPopup(location)
+        .openPopup();
 
+      map.setView([lat2, lng2], 13);
       getNearbyPlaces(lat2, lng2);
+
       connectLocations();
     });
 }
 
+// ================= CONNECT =================
 function connectLocations() {
   if (!userMarker || !secondMarker) return;
 
@@ -218,7 +224,9 @@ function connectLocations() {
   let p2 = secondMarker.getLatLng();
 
   if (line) map.removeLayer(line);
+
   line = L.polyline([p1, p2], {color: "blue"}).addTo(map);
+
   calculateDistance(p1, p2);
 }
 
@@ -227,7 +235,6 @@ function calculateDistance(p1, p2) {
   distance = distance.toFixed(2);
 
   document.getElementById("distance").innerText = distance;
-
   speakDistance(distance);
 }
 
